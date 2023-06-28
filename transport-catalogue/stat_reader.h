@@ -4,11 +4,11 @@
 
 namespace print
 {
-	void BusInformation(const information::Bus& route);
+	void BusInformation(std::ostream& stream, const information::Bus& route);
 
-	void NotFoundBus(const std::string& a);
+	void NotFoundBus(std::ostream& stream, const std::string& a);
 
-	void NotFoundStops(const std::string& a);
+	void NotFoundStops(std::ostream& stream, const std::string& a);
 
-	void FoundInBusOnRoute(const information::Stop& stop);
+	void FoundInBusOnRoute(std::ostream& stream, const information::Stop& stop);
 }

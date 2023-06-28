@@ -61,7 +61,7 @@ namespace reader
         return bus1;
     }
 
-    QueryBusStops ParserStringBusRoute(string& str)
+    QueryBusStops ParseQueryBus(string& str)
     {
         QueryBusStops qbus;
 
@@ -70,7 +70,7 @@ namespace reader
         return qbus;
     }
 
-    QueryBusStops ParserStringStopsRoute(string& str)
+    QueryBusStops ParseQueryBusStops(string& str)
     {
         QueryBusStops qstops;
         qstops._isBus = false;
@@ -80,7 +80,7 @@ namespace reader
         return qstops;
     }
 
-    void ReadingSourceData(vector<reader::Stop>& stops, vector<reader::Bus>& buses)
+    void ReadData(vector<reader::Stop>& stops, vector<reader::Bus>& buses)
     {
         string str;
         size_t num;
@@ -100,7 +100,7 @@ namespace reader
         }
     }
 
-    void ReadingBusesAndStopsLookingFor(vector<reader::QueryBusStops>& queryes)
+    void ReadQueries(vector<reader::QueryBusStops>& queryes)
     {
         string str;
         size_t num2;
@@ -111,11 +111,11 @@ namespace reader
             getline(cin, str);
             if (str.find("Bus") == 0)
             {
-                queryes.push_back(ParserStringBusRoute(str));
+                queryes.push_back(ParseQueryBus(str));
             }
             else if (str.find("Stop") == 0)
             {
-                queryes.push_back(ParserStringStopsRoute(str));
+                queryes.push_back(ParseQueryBusStops(str));
             }
         }
     }

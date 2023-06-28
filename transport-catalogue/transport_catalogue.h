@@ -1,4 +1,5 @@
 #pragma once
+#include "input_reader.h"
 
 #include <set>
 #include <map>
@@ -7,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "geo.h"
+#include <optional>
 
 namespace information
 {
@@ -62,5 +64,23 @@ namespace information
 		size_t	_uniqueStops = 0;
 		size_t _sumFactDist = 0;
 		double _curvate = 0.0;
+	};
+
+	class Catalogue
+	{
+	public:
+
+		void AddStops(std::string& stop, double& lat, double& lng, std::map<std::string, size_t> distanceToStops);
+
+		void AddBus(std::string& numberBus, std::vector<std::string>& stopBus, bool isCircleOrNot);
+
+		std::optional<information::Bus> FindingBus(std::string& name);
+
+		std::optional<information::Stop> FindingStops(std::string& name);
+
+	private:
+		std::map<std::string, information::Stop> existingStops;
+		std::map<std::pair<std::string, std::string>, size_t> distanceBetweenStops;
+		std::map<std::string, information::Bus> existingBus;
 	};
 }

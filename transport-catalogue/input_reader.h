@@ -12,7 +12,6 @@ namespace reader
 		double _lat = 0.0;
 		double _lng = 0.0;
 		std::string _stop;
-		//map<первая остановка , вторая остановка; value>  , а если map<вторая остановка, первая остановка , value>
 		std::map<std::string, size_t> _distanceToStops;
 	};
 
@@ -31,7 +30,7 @@ namespace reader
 
 	QueryBusStops GetFindNumberBus(std::string a);
 
-	void ReadingSourceData(std::vector<reader::Stop>& stop3, std::vector<reader::Bus>& bus3);
+	void ReadData(std::vector<reader::Stop>& stop3, std::vector<reader::Bus>& bus3);
 
-	void ReadingBusesAndStopsLookingFor(std::vector<reader::QueryBusStops>& qbus3);
+	void ReadQueries(std::vector<reader::QueryBusStops>& qbus3);
 }

@@ -1,65 +1,67 @@
 #include <iostream>
 #include "input_reader.h"
 #include "stat_reader.h"
+#include "transport_catalogue.h"
 
 using namespace std;
 
-int main()
+information::Catalogue ReadData()
 {
     vector<reader::Stop> inPutStops;
     vector<reader::Bus> inPutBus;
-    reader::ReadingSourceData(inPutStops, inPutBus);
+    reader::ReadData(inPutStops, inPutBus);
 
-    map<string, information::Stop> existingStops;
-    map<pair<string, string>, size_t> distanceBetweenStops;
+    information::Catalogue catalogue;
+
     for (auto& elem : inPutStops)
     {
-        existingStops.insert(make_pair(elem._stop, information::Stop(elem._lat, elem._lng, elem._stop)));
-
-        for (const auto& [stopName, stopDistance] : elem._distanceToStops)
-        {
-            distanceBetweenStops[{elem._stop, stopName}] = stopDistance;
-
-        }
+        catalogue.AddStops(elem._stop, elem._lat, elem._lng, elem._distanceToStops);
     }
-
-    map<string, information::Bus> existingBus;
     for (auto& elem : inPutBus)
     {
-        existingBus.insert(make_pair(elem._numberBus, information::Bus::CreateBusRoute(elem._numberBus, elem._stopBus, elem._isCircleOrNot, existingStops,distanceBetweenStops)));
+        catalogue.AddBus(elem._numberBus, elem._stopBus, elem._isCircleOrNot);
     }
+    return catalogue;
+}
 
+void ExistingData(information::Catalogue catalogue)
+{
     vector<reader::QueryBusStops> inPutFindBusStops;
-    reader::ReadingBusesAndStopsLookingFor(inPutFindBusStops);
+    reader::ReadQueries(inPutFindBusStops);
     for (auto& elem : inPutFindBusStops)
     {
         if (elem._isBus)
         {
-            auto it = existingBus.find(elem._name);
-
-            if (it != existingBus.end())
+            auto findingBus = catalogue.FindingBus(elem._name);
+            if (findingBus.has_value())
             {
-                print::BusInformation(it->second);
+                print::BusInformation(std::cout, *findingBus);
             }
             else
             {
-                print::NotFoundBus(elem._name);
+                print::NotFoundBus(std::cout, elem._name);
             }
         }
         else
         {
-            auto it = existingStops.find(elem._name);
-
-            if (it == existingStops.end())
+            auto findingStop = catalogue.FindingStops(elem._name);
+            if (findingStop.has_value())
             {
-                print::NotFoundStops(elem._name);
+
+                print::FoundInBusOnRoute(std::cout, *findingStop);
             }
             else
             {
-                print::FoundInBusOnRoute(it->second);
+                print::NotFoundStops(std::cout, elem._name);
             }
         }
     }
+}
+
+int main()
+{
+    auto catalogue = ReadData();
+    ExistingData(catalogue);
 
     return 0;
 }

@@ -154,4 +154,40 @@ namespace information
 	{
 		return _curvate;
 	}
+	void Catalogue::AddStops(string& stop, double& lat, double& lng, map<string, size_t> distanceToStops)
+	{
+		existingStops.insert(make_pair(stop, information::Stop(lat, lng, stop)));
+
+		for (const auto& [stopName, stopDistance] : distanceToStops)
+		{
+			distanceBetweenStops[{stop, stopName}] = stopDistance;
+		}
+	}
+
+	void Catalogue::AddBus(string& numberBus, vector<string>& stopBus, bool isCircleOrNot)
+	{
+			existingBus.insert(make_pair(numberBus, information::Bus::CreateBusRoute(numberBus, stopBus, isCircleOrNot, existingStops, distanceBetweenStops)));
+	}
+
+	std::optional<information::Bus> Catalogue::FindingBus(string& name)
+	{
+		auto it = existingBus.find(name);
+
+		if (it != existingBus.end())
+		{
+			return it->second;
+		}
+		return std::nullopt;
+	}
+
+	std::optional<information::Stop> Catalogue::FindingStops(string& name)
+	{
+		auto it = existingStops.find(name);
+
+		if (it == existingStops.end())
+		{
+			return std::nullopt;
+		}
+		return it->second;
+	}
 }
