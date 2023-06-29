@@ -6,6 +6,20 @@
 using namespace std;
 namespace reader
 {
+    struct Stop
+    {
+        double _lat = 0.0;
+        double _lng = 0.0;
+        std::string _stop;
+        std::map<std::string, size_t> _distanceToStops;
+    };
+
+    struct Bus
+    {
+        std::string _numberBus;
+        std::vector<std::string> _stopBus;
+        bool _isCircleOrNot = true;
+    };
 
     Stop ParserStringStop(string& str)
     {
@@ -23,7 +37,7 @@ namespace reader
         size_t posCommaAfterCoords = str.find(",",posCommaBetweenCoords + 1);
         while(posCommaAfterCoords != string::npos)
         {
-            int findNextComma = str.find(",", posCommaAfterCoords + 1);
+            auto findNextComma = str.find(",", posCommaAfterCoords + 1);
             string disStop = str.substr(posCommaAfterCoords + 2, findNextComma - posCommaAfterCoords - 2);
             auto findMto = disStop.find("m to ");
             size_t distance = stoul(disStop.substr(0, findMto));
@@ -80,7 +94,7 @@ namespace reader
         return qstops;
     }
 
-    void ReadData(vector<reader::Stop>& stops, vector<reader::Bus>& buses)
+    void ReadDataQuery(vector<reader::Stop>& stops, vector<reader::Bus>& buses)
     {
         string str;
         size_t num;
@@ -120,4 +134,22 @@ namespace reader
         }
     }
 
+    information::Catalogue ReadData()
+    {
+        vector<reader::Stop> inPutStops;
+        vector<reader::Bus> inPutBus;
+        reader::ReadDataQuery(inPutStops, inPutBus);
+
+        information::Catalogue catalogue;
+
+        for (auto& elem : inPutStops)
+        {
+            catalogue.AddStops(elem._stop, elem._lat, elem._lng, elem._distanceToStops);
+        }
+        for (auto& elem : inPutBus)
+        {
+            catalogue.AddBus(elem._numberBus, elem._stopBus, elem._isCircleOrNot);
+        }
+        return catalogue;
+    }
 }

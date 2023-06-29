@@ -4,6 +4,8 @@
 
 namespace print
 {
+	void ReadAndExecuteQueries(const information::Catalogue& catalogue);
+
 	void BusInformation(std::ostream& stream, const information::Bus& route);
 
 	void NotFoundBus(std::ostream& stream, const std::string& a);

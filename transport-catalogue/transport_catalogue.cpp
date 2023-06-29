@@ -5,7 +5,7 @@ using namespace std;
 
 namespace information
 {
-	Stop::Stop(double& lat, double& lng, string& stop) : _stop(stop)
+	Stop::Stop(double& lat, double& lng,const string& stop) : _stop(stop)
 	{
 		_coords.lat = lat;
 		_coords.lng = lng;
@@ -36,7 +36,7 @@ namespace information
 		_busRoutes.insert(numberBus);
 	}
 
-	Bus::Bus(string& numberBus, const vector<string>& stopBus, size_t stopsOnRoute, size_t uniqueStops, size_t sumFactDist, double curvate) :
+	Bus::Bus(const string& numberBus, const vector<string>& stopBus, size_t stopsOnRoute, size_t uniqueStops, size_t sumFactDist, double curvate) :
 		_numberBus(numberBus),
 		_stopBus(stopBus),
 		_stopsOnRoute(stopsOnRoute),
@@ -57,7 +57,7 @@ namespace information
 		return size_t();
 	}
 
-	Bus Bus::CreateBusRoute(string& numberBus, vector<string>& stopBus, bool isCircleOrNot, map<string, Stop>& existingStops, map<pair<string, string>, size_t>& distanceBetweenStops)
+	Bus Bus::CreateBusRoute(const string& numberBus, vector<string>& stopBus, bool isCircleOrNot, map<string, Stop>& existingStops, map<pair<string, string>, size_t>& distanceBetweenStops)
 	{
 		size_t stopsOnRoute = stopBus.size();
 		size_t uniqueStops = 0;
@@ -136,17 +136,17 @@ namespace information
 		return _numberBus;
 	}
 
-	int Bus::GetStopsOnRoute() const
+	size_t Bus::GetStopsOnRoute() const
 	{
 		return _stopsOnRoute;
 	}
 	
-	int Bus::GetUniqueStops() const
+	size_t Bus::GetUniqueStops() const
 	{
 		return _uniqueStops;
 	}
 
-	double Bus::GetSumFactDistance() const
+	size_t Bus::GetSumFactDistance() const
 	{
 		return _sumFactDist;
 	}
@@ -154,7 +154,7 @@ namespace information
 	{
 		return _curvate;
 	}
-	void Catalogue::AddStops(string& stop, double& lat, double& lng, map<string, size_t> distanceToStops)
+	void Catalogue::AddStops(const string& stop, double lat, double lng, const map<string, size_t>& distanceToStops)
 	{
 		existingStops.insert(make_pair(stop, information::Stop(lat, lng, stop)));
 
@@ -164,12 +164,12 @@ namespace information
 		}
 	}
 
-	void Catalogue::AddBus(string& numberBus, vector<string>& stopBus, bool isCircleOrNot)
+	void Catalogue::AddBus(const string& numberBus, vector<string>& stopBus, bool isCircleOrNot)
 	{
 			existingBus.insert(make_pair(numberBus, information::Bus::CreateBusRoute(numberBus, stopBus, isCircleOrNot, existingStops, distanceBetweenStops)));
 	}
 
-	std::optional<information::Bus> Catalogue::FindingBus(string& name)
+	std::optional<information::Bus> Catalogue::FindBus(const string& name) const
 	{
 		auto it = existingBus.find(name);
 
@@ -180,7 +180,7 @@ namespace information
 		return std::nullopt;
 	}
 
-	std::optional<information::Stop> Catalogue::FindingStops(string& name)
+	std::optional<information::Stop> Catalogue::FindStops(const string& name) const
 	{
 		auto it = existingStops.find(name);
 

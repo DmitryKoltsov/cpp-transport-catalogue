@@ -1,5 +1,4 @@
 #pragma once
-#include "input_reader.h"
 
 #include <set>
 #include <map>
@@ -17,7 +16,7 @@ namespace information
 	{
 	public:
 
-		Stop(double& lat, double& lng, std::string& stop);
+		Stop(double& lat, double& lng, const std::string& stop);
 
 		bool operator<(const Stop& other) const;
 
@@ -39,21 +38,21 @@ namespace information
 	{
 	public:
 
-		Bus(std::string& numberBus, const std::vector<std::string>& stopBus, size_t stopsOnRoute, size_t uniqueStops, size_t sumFactDist, double curvate);
+		Bus(const std::string& numberBus, const std::vector<std::string>& stopBus, size_t stopsOnRoute, size_t uniqueStops, size_t sumFactDist, double curvate);
 
 		bool operator<(const Bus& other) const;
 
 		size_t CurvateLenght();
 
-		static Bus CreateBusRoute(std::string& numberBus, std::vector<std::string>& stopBus, bool isCircleOrNot, std::map<std::string, Stop>& existingStops, std::map<std::pair<std::string, std::string>, size_t>& distanceBetweenStops);
+		static Bus CreateBusRoute(const std::string& numberBus, std::vector<std::string>& stopBus, bool isCircleOrNot, std::map<std::string, Stop>& existingStops, std::map<std::pair<std::string, std::string>, size_t>& distanceBetweenStops);
 
 		std::string GetNumberBus() const;
 
-		int GetStopsOnRoute() const;
+		size_t GetStopsOnRoute() const;
 
-		int GetUniqueStops() const;
+		size_t GetUniqueStops() const;
 
-		double GetSumFactDistance() const;
+		size_t GetSumFactDistance() const;
 
 		double GetCurvature() const;
 
@@ -70,13 +69,13 @@ namespace information
 	{
 	public:
 
-		void AddStops(std::string& stop, double& lat, double& lng, std::map<std::string, size_t> distanceToStops);
+		void AddStops(const std::string& stop, double lat, double lng, const std::map<std::string, size_t>& distanceToStops);
 
-		void AddBus(std::string& numberBus, std::vector<std::string>& stopBus, bool isCircleOrNot);
+		void AddBus(const std::string& numberBus, std::vector<std::string>& stopBus, bool isCircleOrNot);
 
-		std::optional<information::Bus> FindingBus(std::string& name);
+		std::optional<information::Bus> FindBus(const std::string& name) const;
 
-		std::optional<information::Stop> FindingStops(std::string& name);
+		std::optional<information::Stop> FindStops(const std::string& name) const;
 
 	private:
 		std::map<std::string, information::Stop> existingStops;
