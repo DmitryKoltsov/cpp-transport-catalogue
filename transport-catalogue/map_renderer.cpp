@@ -5,17 +5,17 @@ bool renderer::IsZero(double value)
     return std::abs(value) < EPSILON;
 }
 
-std::vector<svg::Polyline> renderer::MapRenderer::GetRouteLines(const std::map<std::string, information::Bus>& buses, const SphereProjector& sp,const information::Catalogue& catalogue) const
+std::vector<svg::Polyline> renderer::MapRenderer::GetRouteLines(const std::map<std::string, domain::Bus>& buses, const SphereProjector& sp,const information::Catalogue& catalogue) const
 {
     std::vector<svg::Polyline> result;
     size_t color_num = 0;
     for (const auto& [bus_number, bus] : buses) {
         if (bus.GetStopsOnRoute() == 0) continue;
-        std::vector<information::Stop> route_stops;
+        std::vector<domain::Stop> route_stops;
         const std::vector<std::string>& stopNames = bus.GetStopNames();
         for (const std::string& stopName : stopNames)
         {
-            std::optional<information::Stop> stop = catalogue.FindStops(stopName);
+            std::optional<domain::Stop> stop = catalogue.FindStops(stopName);
             if (stop.has_value())
             {
                 route_stops.emplace_back(stop.value());
@@ -46,7 +46,7 @@ std::vector<svg::Polyline> renderer::MapRenderer::GetRouteLines(const std::map<s
     return result;
 }
 
-std::vector<svg::Text> renderer::MapRenderer::GetBusLabel(const std::map<std::string, information::Bus>& buses, const SphereProjector& sp, const information::Catalogue& catalogue) const
+std::vector<svg::Text> renderer::MapRenderer::GetBusLabel(const std::map<std::string, domain::Bus>& buses, const SphereProjector& sp, const information::Catalogue& catalogue) const
 {
     std::vector<svg::Text> result;
     size_t color_num = 0;
@@ -102,7 +102,7 @@ std::vector<svg::Text> renderer::MapRenderer::GetBusLabel(const std::map<std::st
     return result;
 }
 
-std::vector<svg::Circle> renderer::MapRenderer::GetStopsSymbols(const std::map<std::string, information::Stop>& stops, const SphereProjector& sp) const {
+std::vector<svg::Circle> renderer::MapRenderer::GetStopsSymbols(const std::map<std::string, domain::Stop>& stops, const SphereProjector& sp) const {
     std::vector<svg::Circle> result;
     for (const auto& [stop_name, stop] : stops) {
         svg::Circle symbol;
@@ -116,7 +116,7 @@ std::vector<svg::Circle> renderer::MapRenderer::GetStopsSymbols(const std::map<s
     return result;
 }
 
-std::vector<svg::Text> renderer::MapRenderer::GetStopsLabels(const std::map<std::string, information::Stop>& stops, const SphereProjector& sp) const
+std::vector<svg::Text> renderer::MapRenderer::GetStopsLabels(const std::map<std::string, domain::Stop>& stops, const SphereProjector& sp) const
 {
         std::vector<svg::Text> result;
         svg::Text text;
@@ -147,11 +147,11 @@ std::vector<svg::Text> renderer::MapRenderer::GetStopsLabels(const std::map<std:
         return result;
 }
 
-svg::Document renderer::MapRenderer::GetSVG(const std::map<std::string, information::Bus>& buses, const information::Catalogue& catalogue) const
+svg::Document renderer::MapRenderer::GetSVG(const std::map<std::string, domain::Bus>& buses, const information::Catalogue& catalogue) const
 {
     svg::Document result;
     std::vector<geo::Coordinates> route_stops_coords;
-    std::map<std::string, information::Stop> all_stops;
+    std::map<std::string, domain::Stop> all_stops;
 
     for (const auto& [bus_number, bus] : buses) {
         for (const auto& stopName : bus.GetStopNames()) {

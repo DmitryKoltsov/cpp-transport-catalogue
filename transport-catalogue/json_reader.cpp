@@ -2,7 +2,7 @@
 
 using namespace std::literals;
 
-void JsonReader::ProcessRequests(const json::Node& stat_requests, RequestHandler::RequestHandler& rh, information::Catalogue& catalogue) const
+void JsonReader::ProcessRequests(const json::Node& stat_requests, const renderer::MapRenderer& render_settings, information::Catalogue& catalogue, std::ostream& out) const
 {
     json::Array result;
     for (auto& request : stat_requests.AsArray()) {
@@ -10,7 +10,7 @@ void JsonReader::ProcessRequests(const json::Node& stat_requests, RequestHandler
         const auto& type = request_map.at("type").AsString();
         if (type == "Stop")
         {
-            result.push_back(PrintStop(request_map,rh,catalogue).AsMap());
+            result.push_back(PrintStop(request_map,catalogue).AsMap());
         }
         if (type == "Bus")
         {
@@ -18,11 +18,11 @@ void JsonReader::ProcessRequests(const json::Node& stat_requests, RequestHandler
         }
         if (type == "Map")
         {
-            result.push_back(PrintMap(request_map, rh, catalogue).AsMap());
+            result.push_back(PrintMap(request_map, render_settings, catalogue).AsMap());
         }
     }
 
-    json::Print(json::Document{ result }, std::cout);
+    json::Print(json::Document{ result }, out);
 }
 
 const json::Node& JsonReader::GetBaseRequests() const
@@ -176,7 +176,7 @@ const json::Node JsonReader::PrintRoute(const json::Dict& request_map,const info
     return result;
 }
 
-const json::Node JsonReader::PrintStop(const json::Dict& request_map, RequestHandler::RequestHandler& rh, const information::Catalogue& catalogue) const
+const json::Node JsonReader::PrintStop(const json::Dict& request_map, const information::Catalogue& catalogue) const
 {
     json::Dict result;
     const std::string& stop_name = request_map.at("name").AsString();
@@ -189,7 +189,7 @@ const json::Node JsonReader::PrintStop(const json::Dict& request_map, RequestHan
     else
     {
         json::Array buses;
-        const std::set<std::string>& busList = rh.GetBusesByStop(stop_name);
+        const std::set<std::string>& busList = findStop->GetBusRoute();
         for (auto& bus : busList) {
             buses.push_back(bus);
         }
@@ -199,12 +199,12 @@ const json::Node JsonReader::PrintStop(const json::Dict& request_map, RequestHan
     return result;
 }
 
-const json::Node JsonReader::PrintMap(const json::Dict& request_map, RequestHandler::RequestHandler& rh, const information::Catalogue& catalogue) const
+const json::Node JsonReader::PrintMap(const json::Dict& request_map,const renderer::MapRenderer& render_settings, const information::Catalogue& catalogue) const
 {
     json::Dict result;
     result.emplace("request_id", request_map.at("id").AsInt());
     std::ostringstream strm;
-    svg::Document map = rh.RenderMap(catalogue);
+    svg::Document map = render_settings.GetSVG(catalogue.GetExistingBus(), catalogue);
     map.Render(strm);
     result.emplace("map", strm.str());
 

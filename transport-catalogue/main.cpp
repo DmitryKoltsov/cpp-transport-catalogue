@@ -15,6 +15,5 @@ int main()
     const auto& render_settings = requests.GetRenderSettings().AsMap();
     const auto& renderer = requests.FillRenderSettings(render_settings);
 
-    RequestHandler::RequestHandler rh(catalogue,renderer);
-    requests.ProcessRequests(stat_req,rh,catalogue);
+    requests.ProcessRequests(stat_req, renderer,catalogue,std::cout);
 }

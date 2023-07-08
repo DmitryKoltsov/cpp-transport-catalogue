@@ -80,8 +80,8 @@ struct PrintContext {
     int indent = 0;
 
     void PrintIndent() const {
-        static auto space{ ' ' };
-        out.write(&space, indent);
+        for (int i{ 0 }; i < indent; ++i)
+            out.put(' ');
     }
 
     PrintContext Indented() const {
