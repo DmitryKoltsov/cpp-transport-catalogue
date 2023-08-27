@@ -1,6 +1,31 @@
 #include "json_reader.h"  
 using namespace std::literals;  
   
+void JsonReader::PrintInformation(const json::Node& stat_requests, const renderer::MapRenderer& render_settings, information::Catalogue& catalogue, std::ostream& out) const
+{
+    json::Builder builder;
+    auto startFirstArray = builder.StartArray();
+    for (auto& request : stat_requests.AsArray()) {
+        const auto& request_map = request.AsDict();
+        const auto& type = request_map.at("type").AsString();
+        if (type == "Stop")
+        {
+            PrintStop(request_map, catalogue, builder);
+        }
+        if (type == "Bus")
+        {
+            PrintRoute(request_map, catalogue, builder);
+        }
+        if (type == "Map")
+        {
+            PrintMap(request_map, render_settings, catalogue, builder);
+        }
+    }
+    startFirstArray.EndArray();
+
+    json::Print(json::Document{ builder.Build() }, out);
+}
+
 void JsonReader::ProcessRequests(const json::Node& stat_requests, const renderer::MapRenderer& render_settings,const graphWorker::RouterSettings& routing_settings, information::Catalogue& catalogue, std::ostream& out) const
 {  
     json::Builder builder; 
@@ -12,7 +37,7 @@ void JsonReader::ProcessRequests(const json::Node& stat_requests, const renderer
         if (type == "Stop")  
         {  
             PrintStop(request_map,catalogue, builder); 
-        }  
+        }
         if (type == "Bus")  
         {  
             PrintRoute(request_map,catalogue, builder); 
@@ -30,8 +55,8 @@ void JsonReader::ProcessRequests(const json::Node& stat_requests, const renderer
   
     json::Print(json::Document{ builder.Build() }, out); 
 }  
-  
-const json::Node& JsonReader::GetBaseRequests() const  
+
+const json::Node& JsonReader::GetBaseRequests() const
 {  
 	if (!input_.GetRoot().AsDict().count("base_requests")) 
 	{  
@@ -59,7 +84,16 @@ const json::Node& JsonReader::GetRenderSettings() const
     }  
   
     return input_.GetRoot().AsDict().at("render_settings"); 
-}  
+}
+
+const json::Node& JsonReader::GetSerializationSettings() const
+{
+    if (!input_.GetRoot().AsDict().count("serialization_settings"))
+    {
+        return emp;
+    }
+    return input_.GetRoot().AsDict().at("serialization_settings").AsDict().at("file");
+}
 
 const json::Node& JsonReader::GetRoutingSettings() const
 {
@@ -215,7 +249,7 @@ void JsonReader::PrintStop(const json::Dict& request_map, const information::Cat
         auto arrayStart = startDict.Key("buses").StartArray(); 
         const std::set<std::string>& busList = findStop->GetBusRoute(); 
         for (auto& bus : busList) 
-        { 
+        {
             arrayStart.Value(bus); 
         } 
         arrayStart.EndArray(); 
@@ -226,13 +260,13 @@ void JsonReader::PrintStop(const json::Dict& request_map, const information::Cat
 void JsonReader::PrintMap(const json::Dict& request_map,const renderer::MapRenderer& render_settings, const information::Catalogue& catalogue, json::Builder& iBuilder) const 
 {  
     auto startDict = iBuilder.StartDict(); 
-    startDict.Key("request_id").Value(request_map.at("id").AsInt()); 
-    std::ostringstream strm; 
-    svg::Document map = render_settings.GetSVG(catalogue.GetExistingBus(), catalogue); 
-    map.Render(strm); 
-    startDict.Key("map").Value(strm.str()); 
+    startDict.Key("request_id").Value(request_map.at("id").AsInt());
+    std::ostringstream strm;
+    svg::Document map = render_settings.GetSVG(catalogue.GetExistingBus(), catalogue);
+    map.Render(strm);
+    startDict.Key("map").Value(strm.str());
  
-    startDict.EndDict(); 
+    startDict.EndDict();
 }
 
 void JsonReader::PrintRouting(const json::Dict& request_map, json::Builder& iBuilder,const graphWorker::RouterSettings& routing_settings,graphWorker::GraphWorker& worker) const

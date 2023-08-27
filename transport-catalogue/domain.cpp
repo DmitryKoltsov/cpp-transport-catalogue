@@ -1,5 +1,4 @@
 #include "domain.h"  
-#include "geo.h"   
 using namespace std;  
   
 domain::Stop::Stop(double& lat, double& lng, const string& stop) : _stop(stop)  

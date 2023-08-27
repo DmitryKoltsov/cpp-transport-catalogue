@@ -17,6 +17,10 @@ namespace information
 	class Catalogue   
 	{   
 	public:   
+
+		Catalogue() = default;
+
+		Catalogue(std::map<std::string, domain::Stop>&& stops, std::map<std::pair<std::string, std::string>, size_t>&& distanceBetweenStops, std::map<std::string, domain::Bus>&& buses);
   
 		void AddStops(const std::string& stop, double lat, double lng, const std::map<std::string, int>& distanceToStops);  
    
@@ -37,8 +41,8 @@ namespace information
 		const std::map < std::pair < std::string,std::string > , size_t>& GetDistBetweenStops() const;
 
 	private:   
-		std::map<std::string, domain::Stop> existingStops;  
-		std::map<std::pair<std::string, std::string>, size_t>  distanceBetweenStops;   
-		std::map<std::string, domain::Bus> existingBus;  
+		std::map<std::string, domain::Stop> _existingStops;  
+		std::map<std::pair<std::string, std::string>, size_t>  _distanceBetweenStops;   
+		std::map<std::string, domain::Bus> _existingBus;  
 	};   
 }

@@ -145,7 +145,12 @@ std::vector<svg::Text> renderer::MapRenderer::GetStopsLabels(const std::map<std:
         }  
       
         return result;  
-}  
+}
+
+const renderer::RenderSettings& renderer::MapRenderer::GetRenderSettings() const
+{
+    return render_settings_;
+}
   
 svg::Document renderer::MapRenderer::GetSVG(const std::map<std::string, domain::Bus>& buses, const information::Catalogue& catalogue) const  
 {  

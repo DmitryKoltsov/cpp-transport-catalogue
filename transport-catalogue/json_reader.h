@@ -14,14 +14,15 @@ public:
   
 	}  
   
-	  
   
 	const json::Node& GetBaseRequests() const;  
 	const json::Node& GetStatRequests() const;  
 	const json::Node& GetRenderSettings() const;
-
+	const json::Node& GetSerializationSettings() const;
 	const json::Node& GetRoutingSettings() const;
   
+	void PrintInformation(const json::Node& stat_requests, const renderer::MapRenderer& render_settings, information::Catalogue& catalogue, std::ostream& out) const;
+
 	void ProcessRequests(const json::Node& stat_requests, const renderer::MapRenderer& render_settings,const graphWorker::RouterSettings& routing_settings, information::Catalogue& catalogue, std::ostream& out) const;
   
 	void FillCatalogue(information::Catalogue& catalogue);  

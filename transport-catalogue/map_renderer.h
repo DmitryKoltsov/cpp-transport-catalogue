@@ -103,9 +103,9 @@ namespace renderer
         std::vector<svg::Text> GetBusLabel(const std::map<std::string, domain::Bus>& buses, const SphereProjector& sp, const information::Catalogue& catalogue) const;  
         std::vector<svg::Circle> GetStopsSymbols(const std::map<std::string, domain::Stop>& stops, const SphereProjector& sp) const;  
         std::vector<svg::Text> GetStopsLabels(const std::map<std::string, domain::Stop>& stops, const SphereProjector& sp) const;  
-  
-  
-  
+        
+        const RenderSettings& GetRenderSettings() const;
+
         svg::Document GetSVG(const std::map<std::string, domain::Bus>& buses, const information::Catalogue& catalogue) const;  
   
     private:  

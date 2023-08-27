@@ -1,0 +1,16 @@
+syntax="proto3";
+
+package pr_graph;
+
+message Edge
+{
+	 uint32 from = 1;
+     uint32 to = 2;
+     double weight = 3;
+}
+
+message Inform
+{
+    repeated Edge edges = 1;
+    repeated uint32 incidence_lists = 2;
+}
